@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<button id="getjson">List Current Processes</button>
+<div id="jsoncontent"></div>
+
+<script>
+$(document).ready(function(){
+  $("#getjson").click(function(){
+    $("#jsoncontent").html("")
+
+    $.getJSON("{{ url_for('query_procs') }}", function(result){
+      $.each(result, function(i, field){
+        $("#jsoncontent").append("<h3>" + i + "</h3>");
+        $("#jsoncontent").append("<p>");
+        $.each(field, function(ci, cfield){
+          $("#jsoncontent").append(ci + ": " + cfield + "<br/>");
+        });
+        $("#jsoncontent").append("</p>");
+      });
+    });
+  });
+});
+</script>
+
+</body>
+</html>
