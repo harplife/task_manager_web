@@ -13,12 +13,13 @@ def print_process_info(proc_obj, proc_order=1):
     with proc_obj.oneshot():
         print(f'process order {proc_order}')
         print('name: ', proc_obj.name())
+        print('cmdline: ', proc_obj.cmdline())
         print('pid: ', proc_obj.pid)
-        #print('cpu_times: ', proc_obj.cpu_times())
-        #print('cpu_percent: ', proc_obj.cpu_percent())
-        #print('create_time: ', proc_obj.create_time())
+        print('cpu_times: ', proc_obj.cpu_times())
+        print('cpu_percent: ', proc_obj.cpu_percent())
+        print('create_time: ', proc_obj.create_time())
         print('status: ', proc_obj.status())
-        #print('threads: ', proc_obj.threads())
+        print('threads: ', proc_obj.threads())
         print('exe: ', proc_obj.exe())
         try:
             parent_pid = proc_obj.ppid()

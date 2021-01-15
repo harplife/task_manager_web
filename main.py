@@ -26,7 +26,9 @@ def use_psutil(timetostr=True, tojson=True):
 
     proc_info = []
     for proc in captured_processes:
-        info = proc.as_dict(attrs=['name', 'pid', 'status', 'create_time'])
+        info = proc.as_dict(attrs=[
+            'name','pid', 'status', 'create_time', 'exe', 'ppid', 'cmdline'
+            ])
         proc_info.append(info)
 
     proc_sorted = sorted(proc_info, key=itemgetter('create_time'), reverse=True)
@@ -61,6 +63,21 @@ def query_by_name(name):
     found = []
     for proc in proc_list:
         if name in proc['name']:
+            found.append(proc)
+    
+    proc_sorted = time_to_str(found)
+    proc_sorted_json = {count: value for count, value in enumerate(proc_sorted)}
+
+    return proc_sorted_json
+
+
+@app.route('/query_by_pid/<pid>')
+def query_by_pid(pid):
+    # TODO: create an AJAX call to query this function with user input
+    proc_list = use_psutil(timetostr=False, tojson=False)
+    found = []
+    for proc in proc_list:
+        if pid == proc['pid']:
             found.append(proc)
     
     proc_sorted = time_to_str(found)
