@@ -3,36 +3,42 @@ import subprocess
 from subprocess import Popen
 
 subp = Popen(
-    ['python', 'infinite.py'],
+    'infinite.bat',
+    #['python', 'infinite.py'],
     stdout=subprocess.DEVNULL,
     stderr=subprocess.DEVNULL
     )
 
-def print_process_info(proc_obj):
+def print_process_info(proc_obj, proc_order=1):
     with proc_obj.oneshot():
+        print(f'process order {proc_order}')
         print('name: ', proc_obj.name())
         print('pid: ', proc_obj.pid)
-        print('cpu_times: ', proc_obj.cpu_times())
-        print('cpu_percent: ', proc_obj.cpu_percent())
-        print('create_time: ', proc_obj.create_time())
+        #print('cpu_times: ', proc_obj.cpu_times())
+        #print('cpu_percent: ', proc_obj.cpu_percent())
+        #print('create_time: ', proc_obj.create_time())
         print('status: ', proc_obj.status())
-        print('threads: ', proc_obj.threads())
+        #print('threads: ', proc_obj.threads())
         print('exe: ', proc_obj.exe())
         try:
             parent_pid = proc_obj.ppid()
-        except:
-            pass
+        except Exception as e:
+            raise e
         else:
             print('parent id: ', parent_pid)
             try:
-                parent = psutil.Process(parent_pid)
+                parent = proc_obj.parent()
             except psutil.NoSuchProcess:
-                print(f'NoSuchProcess: failed to find process by pid {parent_pid}')
+                print(f'Unable to find parent, {parent_pid}')
             else:
-                print('\nPrinting parent process info\n')
-                print_process_info(parent)
+                if parent is not None:
+                    print('\nPrinting parent process info\n')
+                    proc_order += 1
+                    print_process_info(parent, proc_order=proc_order)
+                else:
+                    print(f'Unable to find parent, {parent_pid}')
 
-p = psutil.Process()
+p = psutil.Process(subp.pid)
 
 print_process_info(p)
 '''
