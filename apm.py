@@ -108,7 +108,7 @@ def start_subp(population):
         processes = []
         for _ in range(population):
             subp = Popen(
-                cmdline,
+                *cmdline,
                 #['export', 'FLASK_APP=simpleweb.py', '&&', 'flask', 'run', '--host=0.0.0.0', '--port=8084'],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL
