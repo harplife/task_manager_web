@@ -11,8 +11,8 @@ I want:
 
 ## Dependencies
 
-1. psutil == ?
-2. flask == ?
+1. psutil = 5.8.0
+2. flask == 1.1.2
 
 ## Current Functions
 
@@ -22,3 +22,17 @@ I want:
 4. Find process by name
 5. TODO: monitor CPU usuage
 6. TODO: Find "main" processes, and list its children
+
+## by file explanation
+
+### apm.py
+
+running `apm.py` will start a flask app that can start/stop/monitor a process.
+
+#### details
+
+1. it runs flask app
+2. `/start/number` will Popen on a given file (e.g. infinite.bat), on a given number of times
+3. `/running` will return pids of processes that are running the file
+4. `/stop` will stop all procesess that are running the file
+5. `/monitor` will give information about all proceses running the file
