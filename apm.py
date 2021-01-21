@@ -56,6 +56,26 @@ def killer(filename):
         else:
             print(f'process {p_obj.pid} killed.')
     print('Nothing is alive.')
+    return processes
+
+
+def inform(pids):
+    response = {}
+    processes = check(filename)
+    for process in processes:
+        proc_obj = psutil.Process(process)
+        p_info = {}
+        with proc_obj.oneshot():
+            p_info['name'] = proc_obj.name()
+            p_info['cmdline'] = proc_obj.cmdline()
+            p_info['cpu_times'] = proc_obj.cpu_times()
+            p_info['cpu_percent'] = proc_obj.cpu_percent()
+            p_info['create_time'] = proc_obj.create_time()
+            p_info['status'] = proc_obj.status()
+            p_info['threads'] = proc_obj.threads()
+            p_info['exe'] = proc_obj.exe()
+        response[proc_obj.pid] = p_info
+    return response
 
 
 app = Flask(__name__)
@@ -78,52 +98,36 @@ def running():
     return {'running': processes}
 
 
-@app.route('/start')
-def start_subp():
+@app.route('/start/<population>')
+def start_subp(population):
     processes = check(filename)
+    population = int(population)
     if len(processes) > 0:
         return redirect(url_for('running'))
     else:
-        subp = Popen(
-            cmdline,
-            #['export', 'FLASK_APP=simpleweb.py', '&&', 'flask', 'run', '--host=0.0.0.0', '--port=8084'],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-            )
-        #g.subp_id = subp.pid
-        return {'status': 'started', 'id': subp.pid}
+        processes = []
+        for _ in range(population):
+            subp = Popen(
+                cmdline,
+                #['export', 'FLASK_APP=simpleweb.py', '&&', 'flask', 'run', '--host=0.0.0.0', '--port=8084'],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+                )
+            processes.append(subp.pid)
+        return {'status': 'started', 'pids': processes}
 
 
-@app.route('/stop/<pid>')
-def stop_subp(pid):
-    pid = int(pid)
-    try:
-        p = psutil.Process(pid)
-    except (psutil.NoSuchProcess):
-        return {'status': f'No Process Found by pid {pid}'}
-    else:
-        try:
-            p.terminate()
-        except Exception as e:
-            raise e
-        else:
-            return {'status': f'process {pid} terminated'}
+@app.route('/stop')
+def stop_subp():
+    k_procs = killer(filename)
+    return {'terminated': k_procs}
 
 
-@app.route('/monitor/<pid>')
-def monitor_subp(pid):
-    pid = int(pid)
-    try:
-        p = psutil.Process(pid)
-    except (psutil.NoSuchProcess):
-        return {'status': f'No Process Found by pid {pid}'}
-    else:
-        response = {}
-        with p.oneshot():
-            response['name'] = p.name()
-            response['status'] = p.status()
-            response['cmdline'] = p.cmdline()
-        return response
+@app.route('/monitor')
+def monitor_subp():
+    processes = check(filename)
+    information = inform(processes)
+    return information
 
 
 if __name__ == '__main__':
