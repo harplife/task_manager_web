@@ -51,3 +51,8 @@ running `apm.py` will start a flask app that can start/stop/monitor a process.
 
 1. Flask can't clean up after subprocess properly. atexit.register() is required. Moe tails [here](https://medium.com/better-programming/create-exit-handlers-for-your-python-appl-bc279e796b6b)
 2. Flask has a weird thing where it initializes things twice. More detail [here](https://stackoverflow.com/a/15491587/10570582)
+
+
+## REFS
+
+1. make process monitor with python (with code) [link](https://www.thepythoncode.com/article/make-process-monitor-python)
