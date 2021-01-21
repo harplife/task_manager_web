@@ -30,6 +30,8 @@ I want:
     - [ref1](https://medium.com/swlh/implement-a-websocket-using-flask-and-socket-io-python-76afa5bbeae1)
     - [ref2](https://stackoverflow.com/a/38643387/10570582)
 2. Use threads to write STDOUT/STDERR to file
+3. Scheduler to query resource info at interval
+    - [ref1](https://github.com/viniciuschiele/flask-apscheduler)
 
 ## by file explanation
 
