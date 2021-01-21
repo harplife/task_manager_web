@@ -10,8 +10,8 @@ Functions:
 
 
 NOTE:
-1. use context start/close to terminate subprocesses properly.
-   Otherwise, flask seems to hang on next startup
+1. flask is not able to clean up after subprocesses properly.
+   Therefore, atexit.register() is required to clean up any subprocesses.
 '''
 
 from flask import Flask, g, redirect, url_for
