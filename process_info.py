@@ -1,10 +1,40 @@
+'''
+This script runs an a process,
+and reports info about the process at a given interval.
+
+It will check if the process is running by looking up filename.
+'''
+
 import psutil
 import subprocess
 from subprocess import Popen
+import time, sys, signal
+
+def signal_handler(signal, frame):
+    print('\nProgram exiting gracefully.')
+    sys.exit(0)
+
+filename = 'infinite.bat'
+cmdline = [filename]
+#filename = 'infinite.py'
+#cmdline = ['python', filename],
+
+for process in psutil.process_iter():
+    try:
+        p_cmdline = process.cmdline()
+    except (PermissionError, psutil.AccessDenied):
+        print('Permission denied, moving along')
+    else:
+        if filename in p_cmdline:
+            print(f'{filename} is already running')
+            sys.exit(0)
+        else:
+            print('not interested')
+
+print(f'Starting {filename}')
 
 subp = Popen(
-    'infinite.bat',
-    #['python', 'infinite.py'],
+    cmdline,
     stdout=subprocess.DEVNULL,
     stderr=subprocess.DEVNULL
     )
@@ -21,6 +51,7 @@ def print_process_info(proc_obj, proc_order=1):
         print('status: ', proc_obj.status())
         print('threads: ', proc_obj.threads())
         print('exe: ', proc_obj.exe())
+        '''
         try:
             parent_pid = proc_obj.ppid()
         except Exception as e:
@@ -38,10 +69,18 @@ def print_process_info(proc_obj, proc_order=1):
                     print_process_info(parent, proc_order=proc_order)
                 else:
                     print(f'Unable to find parent, {parent_pid}')
+        '''
 
 p = psutil.Process(subp.pid)
 
-print_process_info(p)
+while True:
+    try:
+        print_process_info(p)
+    except (psutil.NoSuchProcess, KeyboardInterrupt):
+        print('process is killed by an outsider.')
+        sys.exit(0)
+    else:
+        time.sleep(5)
 '''
     children = p.children(recursive=True)
     for child in children:
@@ -73,4 +112,4 @@ with subp_info.oneshot():
     print('exe: ', subp_info.exe())
 '''
 
-subp.terminate()
+#subp.terminate()
